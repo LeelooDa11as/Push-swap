@@ -1,4 +1,4 @@
-SRCS = ft_push_swap.c
+SRCS = ft_push_swap.c ft_check_input.c
 
 OBJS = ${SRCS:.c=.o}
 
