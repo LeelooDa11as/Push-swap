@@ -39,7 +39,7 @@ int		ft_check_int(int argc, char **argv)
 				return (0);
 			if (argv[x][y] < '0' || argv[x][y] > '9')
 			{
-				if(y != 0 || argv[x][y] != '-')
+				if(y != 0 || argv[x][y] != '-') // != de y == 0 & char == '-'
 					return (0);
 			}
 			y++;
