@@ -32,17 +32,14 @@ int	fill_stack(t_list **current, int argc, char **argv)
 //esta funcion solo es para debugear y chekear, luego se borra
 void	print_stack(t_list *stack)
 {
-	int	i;
-
-	i = 0;
 	while(stack != NULL)
 	{
 		printf("\n     %d\n     |", stack->num);
 		stack = stack->next;
-		i++;
 	}
 	printf("\n-----------\n");
 }
+
 
 //escribir una funcion de comprobacion para acabar el juego
 
@@ -57,7 +54,112 @@ int	is_sorted(t_list *stack)
 	return (1);
 }
 
-int ft_sort(t_list *stack_a, t_list *stack_b)
+int send_first_to_b(t_list **stack_a, t_list **stack_b)
+{
+	if (*stack_a == NULL)
+		return (1);
+	if (*stack_b == NULL || (*stack_a)->num > (*stack_b)->num)
+	{
+		ft_do_push(stack_a, stack_b, 'b');
+		return (1);
+	}
+	ft_rev_rotate(*stack_b);
+	if ((*stack_a)->num < (*stack_b)->num)
+	{
+		ft_rotate(*stack_b);
+		ft_do_push(stack_a, stack_b, 'b');
+		ft_do_rotate(*stack_b, 'b');
+		return (1);
+	}
+	ft_rotate(*stack_b);
+	return (0);
+}
+
+int send_triangle_to_b(t_list **stack_a, t_list **stack_b)
+{
+	int aux;
+	int first;
+
+	if (*stack_a == NULL)
+		return (0);
+	aux = (*stack_a)->num;
+	first = aux;
+	ft_do_push(stack_a, stack_b, 'b');
+	while (*stack_a != NULL && (*stack_a)->num!=aux)
+	{
+		if (!send_first_to_b(stack_a, stack_b))
+		{
+			if ((*stack_a)->num == first)
+				aux = (*stack_a)->num;
+			ft_do_rotate(*stack_a, 'a');
+			printf("%d %d\n", aux, (*stack_a)->num);
+
+		}	
+	}
+	return (1);
+}
+
+int send_triangles_to_b(t_list **stack_a, t_list **stack_b)
+{
+	if (*stack_a == NULL)
+		return (1);
+	if ((*stack_a)->next != NULL && (*stack_a)->num > (*stack_a)->next->num)
+		ft_do_swap(*stack_a, 'a');
+	while(*stack_a != NULL)
+	{
+		send_triangle_to_b(stack_a, stack_b);
+		if (*stack_a != NULL && (*stack_a)->next != NULL && (*stack_a)->num > (*stack_a)->next->num)
+			ft_do_swap(*stack_a, 'a');
+	}
+	return (1);
+}
+
+void sort_triangles(t_list **stack_a, t_list **stack_b)
+{
+	int min;
+
+	ft_do_push(stack_a, stack_b, 'a');
+	min = (*stack_a)->num;
+	while (*stack_b != NULL)
+	{
+		if ((*stack_b)->num < min)
+		{
+			while ((*stack_a)->num != min)
+				ft_do_rev_rotate(*stack_a, 'a');
+			while (*stack_b != NULL && ((*stack_b)->next==NULL || (*stack_b)->num>(*stack_b)->next->num))
+				ft_do_push(stack_a, stack_b, 'a');
+			min = (*stack_a)->num;
+		}
+		else
+		{
+			ft_rev_rotate(*stack_a);
+			if ((*stack_b)->num > (*stack_a)->num)
+			{
+				ft_rotate(*stack_a);
+				ft_do_push(stack_a, stack_b, 'a');
+			}
+			else
+			{
+				ft_rotate(*stack_a);
+				ft_do_rev_rotate(*stack_a, 'a');
+			}
+		}
+		print_stack(*stack_a);
+		print_stack(*stack_b);
+	}
+}
+
+int ft_sort(t_list **stack_a, t_list **stack_b)
+{
+	if (*stack_a == NULL || (*stack_a)->next == NULL)
+		return(1);
+	send_triangles_to_b(stack_a, stack_b);
+	sort_triangles(stack_a, stack_b);
+	return (1);
+}
+
+/*
+int	ft_sort(t_list *stack_a, t_list *stack_b)
 {
 	t_list	*tmp;
 	int 	cont;
@@ -96,7 +198,7 @@ int ft_sort(t_list *stack_a, t_list *stack_b)
 		return (1);
 	return (0);
 }
-
+*/
 int	main(int argc, char *argv[])
 {
 	t_list	*stack_a;
@@ -110,9 +212,10 @@ int	main(int argc, char *argv[])
 		return (ft_error());
 	fill_stack(&stack_a, argc, argv);
 	print_stack(stack_a);
-	if (ft_sort(stack_a, stack_b) != 1)
+	if (ft_sort(&stack_a, &stack_b) != 1)
 		return(ft_error()); //solo para chekear
 	print_stack(stack_a);
+	print_stack(stack_b);
 	return (1);
 }
 

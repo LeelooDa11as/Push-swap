@@ -13,7 +13,11 @@ typedef struct s_list
 } t_list;
 
 //Algorithm
-int ft_sort(t_list *stack_a, t_list *stack_b); //brute force
+int ft_sort(t_list **stack_a, t_list **stack_b); //brute force
+void sort_triangles(t_list **stack_a, t_list **stack_b);
+int send_triangles_to_b(t_list **stack_a, t_list **stack_b);
+int send_triangle_to_b(t_list **stack_a, t_list **stack_b);
+int send_first_to_b(t_list **stack_a, t_list **stack_b);
 
 //Check input for all necessary parameters
 int			ft_check_input(int argc, char **argv);
