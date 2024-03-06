@@ -7,7 +7,7 @@ void	ft_swap(t_list *stack)
 {
 	int	aux_n;
 	
-	if (stack == NULL || stack->next == NULL)
+	if (stack == NULL || stack->next == stack)
 		return;
 	aux_n = stack->num;
 	stack->num = (stack->next)->num;
@@ -21,48 +21,40 @@ void	ft_push(t_list **src, t_list **dst)
 	if (*src == NULL)
 		return;
 	push_elm = *src;
-	*src = (*src)->next;
-	push_elm->next = *dst;
-	*dst = push_elm;
-}
-
-void	ft_rotate(t_list *stack)
-{
-	int	aux;
-
-	if (stack == NULL)
-		return;
-	aux = stack->num;
-	//solo entra si hay almenos 2
-	while (stack != NULL && stack->next != NULL)
+	if (*src == (*src)->next)
+		*src = NULL;
+	else //hace conexiones
 	{
-		stack->num = stack->next->num;
-		stack = stack->next;
+		(*src)->next->prev = (*src)->prev;
+		(*src)->prev->next = (*src)->next;
+		*src = (*src)->next;
 	}
-	//el primer elemento se guarda como el ultimo al acabar while
-	stack->num = aux;
+	if (*dst == NULL)
+	{
+		*dst = push_elm;
+		push_elm->next = push_elm;
+		push_elm->prev = push_elm;
+ 	}
+	else //hay que conectar los elementos
+	{
+		push_elm->prev = (*dst)->prev;
+		push_elm->next = *dst;
+		(*dst)->prev->next = push_elm;
+		(*dst)->prev = push_elm;
+		*dst = push_elm;
+	}
 }
 
-void	ft_rev_rotate(t_list *stack)
+void	ft_rotate(t_list **stack)
 {
-	int	current;
-	int	next;
-	t_list	*first;
-	//first is needed to preserve first element, as there is no possibity
-	//to go back, to it is easier to access it with a pointer, it is needed 
-	// to put the last num
 	if (stack == NULL)
 		return;
-	first = stack;
-	current = stack->num;
-	while (stack != NULL && stack->next != NULL)
-	{	
-		next = stack->next->num;
-		stack->next->num = current;
-		current = next;
-		stack = stack->next;
-	}
-	first->num = current;
+	*stack = (*stack)->next;
 }
 
-
+void	ft_rev_rotate(t_list **stack)
+{
+	if (stack == NULL)
+		return;
+	*stack = (*stack)->prev;
+}

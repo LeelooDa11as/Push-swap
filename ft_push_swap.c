@@ -4,39 +4,48 @@
 int	fill_stack(t_list **current, int argc, char **argv)
 {
 	t_list	*follow;
-	t_list *tmp; // para recorrer la lista que creamos
 	int		i;
-
+	
+	i = 2;
 	*current = malloc(sizeof(t_list));
 	if (!current)
 		return (0);
 	(*current)->num = (int)ft_atoi(argv[1]);
-	(*current)->next = NULL;
-	i = 2;
+	(*current)->next = *current;
+	(*current)->prev = *current;
 	while (i < argc)
 	{
 		follow = malloc(sizeof(t_list));
 		if (!follow)
 			return (0);
 		follow->num = (int)ft_atoi(argv[i]);
-		follow->next = NULL;
-		tmp = *current;
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = follow;
+		follow->next = (*current)->next; //para enganchar el ultimo con el primero, esta dirc se ira propagando por elementos
+		follow->prev = *current; 
+		((*current)->next)->prev = follow;
+		(*current)->next = follow; // asegura que sea el ultimo de la lista
+		*current = follow;
 		i++;
 	}
+	*current = (*current)->next;
 	return (1);
 }
 
 //esta funcion solo es para debugear y chekear, luego se borra
 void	print_stack(t_list *stack)
 {
-	while(stack != NULL)
+	t_list	*first;
+
+	first = stack;
+	if (stack == NULL)
+		return;
+	printf("\n     %d\n     |", stack->num);
+	stack = stack->next;
+	while(stack != first)
 	{
 		printf("\n     %d\n     |", stack->num);
 		stack = stack->next;
 	}
+
 	printf("\n-----------\n");
 }
 
@@ -45,7 +54,10 @@ void	print_stack(t_list *stack)
 
 int	is_sorted(t_list *stack)
 {
-	while (stack != NULL && stack->next != NULL)
+	t_list	*aux;
+
+	aux = stack;
+	while (stack != NULL && stack->next != aux) //para no hacer mas de una vuelta
 	{
 		if (stack->num > stack->next->num)
 			return (0);
@@ -54,110 +66,23 @@ int	is_sorted(t_list *stack)
 	return (1);
 }
 
-int send_first_to_b(t_list **stack_a, t_list **stack_b)
+int ft_sort(t_list **stack_a, t_list **stack_b, int len)
 {
-	if (*stack_a == NULL)
-		return (1);
-	if (*stack_b == NULL || (*stack_a)->num > (*stack_b)->num)
-	{
-		ft_do_push(stack_a, stack_b, 'b');
-		return (1);
-	}
-	ft_rev_rotate(*stack_b);
-	if ((*stack_a)->num < (*stack_b)->num)
-	{
-		ft_rotate(*stack_b);
-		ft_do_push(stack_a, stack_b, 'b');
-		ft_do_rotate(*stack_b, 'b');
-		return (1);
-	}
-	ft_rotate(*stack_b);
-	return (0);
-}
+	int		tri_len;
 
-int send_triangle_to_b(t_list **stack_a, t_list **stack_b)
-{
-	int aux;
-	int first;
-
-	if (*stack_a == NULL)
-		return (0);
-	aux = (*stack_a)->num;
-	first = aux;
-	ft_do_push(stack_a, stack_b, 'b');
-	while (*stack_a != NULL && (*stack_a)->num!=aux)
+	tri_len = 1;
+	//mietras los triangulos sean mas pequeños que len, a ordenar
+	while(tri_len < len)
 	{
-		if (!send_first_to_b(stack_a, stack_b))
-		{
-			if ((*stack_a)->num == first)
-				aux = (*stack_a)->num;
-			ft_do_rotate(*stack_a, 'a');
-			printf("%d %d\n", aux, (*stack_a)->num);
-
-		}	
+		sort_a(stack_a, stack_b, tri_len);
+		tri_len *= 2;
+		sort_b(stack_b, stack_a, tri_len);
+		tri_len *= 2;
 	}
 	return (1);
 }
 
-int send_triangles_to_b(t_list **stack_a, t_list **stack_b)
-{
-	if (*stack_a == NULL)
-		return (1);
-	if ((*stack_a)->next != NULL && (*stack_a)->num > (*stack_a)->next->num)
-		ft_do_swap(*stack_a, 'a');
-	while(*stack_a != NULL)
-	{
-		send_triangle_to_b(stack_a, stack_b);
-		if (*stack_a != NULL && (*stack_a)->next != NULL && (*stack_a)->num > (*stack_a)->next->num)
-			ft_do_swap(*stack_a, 'a');
-	}
-	return (1);
-}
-
-void sort_triangles(t_list **stack_a, t_list **stack_b)
-{
-	int min;
-
-	ft_do_push(stack_a, stack_b, 'a');
-	min = (*stack_a)->num;
-	while (*stack_b != NULL)
-	{
-		if ((*stack_b)->num < min)
-		{
-			while ((*stack_a)->num != min)
-				ft_do_rev_rotate(*stack_a, 'a');
-			while (*stack_b != NULL && ((*stack_b)->next==NULL || (*stack_b)->num>(*stack_b)->next->num))
-				ft_do_push(stack_a, stack_b, 'a');
-			min = (*stack_a)->num;
-		}
-		else
-		{
-			ft_rev_rotate(*stack_a);
-			if ((*stack_b)->num > (*stack_a)->num)
-			{
-				ft_rotate(*stack_a);
-				ft_do_push(stack_a, stack_b, 'a');
-			}
-			else
-			{
-				ft_rotate(*stack_a);
-				ft_do_rev_rotate(*stack_a, 'a');
-			}
-		}
-		print_stack(*stack_a);
-		print_stack(*stack_b);
-	}
-}
-
-int ft_sort(t_list **stack_a, t_list **stack_b)
-{
-	if (*stack_a == NULL || (*stack_a)->next == NULL)
-		return(1);
-	send_triangles_to_b(stack_a, stack_b);
-	sort_triangles(stack_a, stack_b);
-	return (1);
-}
-
+//funciona pero es fuerza bruta
 /*
 int	ft_sort(t_list *stack_a, t_list *stack_b)
 {
@@ -211,11 +136,13 @@ int	main(int argc, char *argv[])
 	if (!ft_check_input(argc,argv))
 		return (ft_error());
 	fill_stack(&stack_a, argc, argv);
-	print_stack(stack_a);
-	if (ft_sort(&stack_a, &stack_b) != 1)
+	//print_stack(stack_a);
+	if (ft_sort(&stack_a, &stack_b, argc - 1) != 1)
 		return(ft_error()); //solo para chekear
 	print_stack(stack_a);
 	print_stack(stack_b);
+	if (!is_sorted(stack_a))
+		printf("Not sorted, loser\n");
 	return (1);
 }
 
@@ -256,4 +183,3 @@ int	main(int argc, char *argv[])
 	return (1);
 }
 */
-

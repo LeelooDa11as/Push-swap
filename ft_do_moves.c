@@ -10,21 +10,16 @@ void	ft_do_swap(t_list *stack, char mode)
         write(1, "sb\n", 3);
 }
 
-void    ft_do_push(t_list **stack_a, t_list **stack_b, char mode)
+void    ft_do_push(t_list **src, t_list **dst, char mode)
 {
+    ft_push(src, dst);
     if (mode == 'a')
-    {
-        ft_push(stack_b, stack_a);
         write(1, "pa\n", 3);
-    }
     else if (mode == 'b')
-    {
-        ft_push(stack_a, stack_b);
         write(1, "pb\n", 3);
-    }
 }
 
-void    ft_do_rotate(t_list *stack, char mode)
+void    ft_do_rotate(t_list **stack, char mode)
 {
     ft_rotate(stack);
     if (mode == 'a')
@@ -33,7 +28,7 @@ void    ft_do_rotate(t_list *stack, char mode)
         write(1, "rb\n", 3);
 }
 
-void    ft_do_rev_rotate(t_list *stack, char mode)
+void    ft_do_rev_rotate(t_list **stack, char mode)
 {
     ft_rev_rotate(stack);
     if (mode == 'a')
