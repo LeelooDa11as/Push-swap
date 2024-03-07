@@ -1,25 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_moves.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kkoval <kkoval@student.42barcelon>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/07 15:51:25 by kkoval            #+#    #+#             */
+/*   Updated: 2024/03/07 16:05:51 by kkoval           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "ft_push_swap.h"
-
-//es el algoritmo
-//int do_moves(t_list	*stack, int len)
 
 void	ft_swap(t_list *stack)
 {
 	int	aux_n;
-	
+
 	if (stack == NULL || stack->next == stack)
-		return;
+		return ;
 	aux_n = stack->num;
 	stack->num = (stack->next)->num;
 	stack->next->num = aux_n;
 }
 
-void	ft_push(t_list **src, t_list **dst)
+void	ft_push(t_list **src, t_list **dst) //hay 26
 {
 	t_list	*push_elm;
-	
+
 	if (*src == NULL)
-		return;
+		return ;
 	push_elm = *src;
 	if (*src == (*src)->next)
 		*src = NULL;
@@ -34,7 +42,7 @@ void	ft_push(t_list **src, t_list **dst)
 		*dst = push_elm;
 		push_elm->next = push_elm;
 		push_elm->prev = push_elm;
- 	}
+	}
 	else //hay que conectar los elementos
 	{
 		push_elm->prev = (*dst)->prev;
@@ -48,13 +56,13 @@ void	ft_push(t_list **src, t_list **dst)
 void	ft_rotate(t_list **stack)
 {
 	if (stack == NULL)
-		return;
+		return ;
 	*stack = (*stack)->next;
 }
 
 void	ft_rev_rotate(t_list **stack)
 {
 	if (stack == NULL)
-		return;
+		return ;
 	*stack = (*stack)->prev;
 }

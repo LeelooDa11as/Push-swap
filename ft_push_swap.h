@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_push_swap.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kkoval <kkoval@student.42barcelon>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/07 15:51:42 by kkoval            #+#    #+#             */
+/*   Updated: 2024/03/07 16:24:20 by kkoval           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FT_PUSH_SWAP_H
 # define FT_PUSH_SWAP_H
 
@@ -15,9 +27,6 @@ typedef struct s_list
 
 //Algorithm
 int ft_sort(t_list **stack_a, t_list **stack_b, int len); //brute force
-// void send_to_a(t_list **stack_a, t_list **stack_b);
-// int send_to_b(t_list **stack_a, t_list **stack_b);
-// int send_first_to_b(t_list **stack_a, t_list **stack_b);
 void		sort_a(t_list **src, t_list **dst, int tri_len);
 void		sort_b(t_list **src, t_list **dst, int tri_len);
 
@@ -47,16 +56,13 @@ void    	ft_do_push(t_list **src, t_list **dst, char mode);
 void    	ft_do_rotate(t_list **stack, char mode);
 void    	ft_do_rev_rotate(t_list **stack, char mode);
 
-
 //Do pair moves
 void		ft_swap_ab(t_list *stack_a, t_list *stack_b);
-void		ft_rotate_ab(t_list **stack_a, t_list *stack_b);
-void    	ft_rev_rot_ab(t_list **stack_a, t_list *stack_b);
+void		ft_rotate_ab(t_list **stack_a, t_list **stack_b);
+void    	ft_rev_rot_ab(t_list **stack_a, t_list **stack_b);
 
 //Utils
 int			ft_error(void);
 int			ft_stack_len(t_list *stack);
-
-
 
 #endif
